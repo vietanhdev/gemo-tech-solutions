@@ -1,0 +1,11 @@
+{
+  "name": "ex01",
+  "version": "1.0.0",
+  "description": "Excercise 01 - Pricing",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Viet Anh Nguyen",
+  "license": "ISC"
+}
