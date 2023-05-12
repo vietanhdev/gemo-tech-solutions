@@ -1,4 +1,4 @@
-import { SIZE_TO_ADDITIONAL_PRICE, DRINK_TYPE_TO_BASE_PRICE, BREAKFAST_TOPPING_TO_ADDITIONAL_PRICE } from "./constants";
+import { SIZE_TO_ADDITIONAL_PRICE, DRINK_TYPE_TO_BASE_PRICE } from "./constants.js";
 
 // Implement function calculatePrice1 to calculate the price of a coffee order based on the following parameters:
 //   1. Drink type: hot, cold, or blended
@@ -10,11 +10,11 @@ import { SIZE_TO_ADDITIONAL_PRICE, DRINK_TYPE_TO_BASE_PRICE, BREAKFAST_TOPPING_T
 //     * $.5 for M size, $1 for L size
 //     * $1 for blended drinks
 //     * $.5 for whipped cream topping
-function calculatePrice1(drinkType, size, whippedCream) {
+export function calculatePrice1(drinkType, size, whippedCream) {
     if (!['hot', 'cold', 'blended'].includes(drinkType)) {
         throw new Error('Invalid drink type. Please choose from hot, cold, or blended.');
     }
-    if (!size in ['S', 'M', 'L']) {
+    if (!['S', 'M', 'L'].includes(size)) {
         throw new Error('Invalid size. Please choose from S, M, or L.');
     }
     if (typeof whippedCream !== 'boolean') {
@@ -36,11 +36,11 @@ function calculatePrice1(drinkType, size, whippedCream) {
 //   1. add XL size which will cost $1.5 additionally
 //   2. Add milk tea drink type with a base price of $2.25
 //   3. Add milk options where whole milk or almond milk with almond cost additional 50c
-function calculatePrice2(drinkType, size, whippedCream, milk) {
+export function calculatePrice2(drinkType, size, whippedCream, milk) {
     if (!['hot', 'cold', 'blended', 'milk_tea'].includes(drinkType)) {
         throw new Error('Invalid drink type. Please choose from hot, cold, blended, or milk_tea.');
     }
-    if (!size in ['S', 'M', 'L', 'XL']) {
+    if (!['S', 'M', 'L', 'XL'].includes(size)) {
         throw new Error('Invalid size. Please choose from S, M, L, or XL.');
     }
     if (typeof whippedCream !== 'boolean') {
@@ -68,11 +68,11 @@ function calculatePrice2(drinkType, size, whippedCream, milk) {
 //   1. The first 2 pumps are free
 //   2. $0.5 for each extra pump
 //   3. Maximum of 6 pumps
-function calculatePrice3(drinkType, size, whippedCream, chocolateSauce=0) {
+export function calculatePrice3(drinkType, size, whippedCream, chocolateSauce=0) {
     if (!['hot', 'cold', 'blended', 'milk_tea'].includes(drinkType)) {
         throw new Error('Invalid drink type. Please choose from hot, cold, blended, or milk_tea.');
     }
-    if (!size in ['S', 'M', 'L', 'XL']) {
+    if (!['S', 'M', 'L', 'XL'].includes(size)) {
         throw new Error('Invalid size. Please choose from S, M, L, or XL.');
     }
     if (typeof whippedCream !== 'boolean') {
@@ -105,7 +105,7 @@ function calculatePrice3(drinkType, size, whippedCream, chocolateSauce=0) {
 //   2. Sandwiches can be egg or turkey for $1 additionally
 //   3. Bagels can have butter or cream cheese toppings for 50c additionally
 //   4. There is no size for food items
-function calculatePrice4(itemType, topping=null) {
+export function calculatePrice4(itemType, topping=null) {
     if (!['sandwich', 'bagel'].includes(itemType)) {
         throw new Error('Invalid item type. Please choose from sandwich or bagel.');
     }
@@ -123,6 +123,8 @@ function calculatePrice4(itemType, topping=null) {
     if (itemType === 'bagel' && topping !== null) {
         price += 0.5;
     }
+
+    return price;
 };
 
 // Add function calculatePrice5 that calculate a list of item instead of one item at a time.
@@ -135,7 +137,7 @@ function calculateItem(drinkType, size, whippedCream, chocolateSauce=0, breakFas
     }
     return price;
 }
-function calculatePrice5(items) {
+export function calculatePrice5(items) {
     let totalPrice = 0;
     let priceBreakdown = [];
     for (let item of items) {
@@ -145,3 +147,4 @@ function calculatePrice5(items) {
     }
     return {totalPrice: totalPrice * 1.0725, priceBreakdown: priceBreakdown};
 }
+

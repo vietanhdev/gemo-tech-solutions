@@ -3,9 +3,13 @@
   "version": "1.0.0",
   "description": "Excercise 01 - Pricing",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "author": "Viet Anh Nguyen",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "mocha": "^10.2.0"
+  }
 }
