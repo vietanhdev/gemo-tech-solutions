@@ -1,4 +1,4 @@
-import { SIZE_TO_ADDITIONAL_PRICE, DRINK_TYPE_TO_BASE_PRICE } from "./constants.js";
+import { SIZE_TO_ADDITIONAL_PRICE, DRINK_TYPE_TO_BASE_PRICE, WHIPPED_CREAM_PRICE, CHOCOLATE_SAUCE_PUMPS_TO_ADDITIONAL_PRICE, BREAKFAST_CUSTOMIZATIONS_TO_ADDITIONAL_PRICE, TAX, ALMOND_MILK_PRICE } from "./constants.js";
 
 // Implement function calculatePrice1 to calculate the price of a coffee order based on the following parameters:
 //   1. Drink type: hot, cold, or blended
@@ -10,7 +10,7 @@ import { SIZE_TO_ADDITIONAL_PRICE, DRINK_TYPE_TO_BASE_PRICE } from "./constants.
 //     * $.5 for M size, $1 for L size
 //     * $1 for blended drinks
 //     * $.5 for whipped cream topping
-export function calculatePrice1(drinkType, size, whippedCream) {
+export function calculatePrice1(drinkType, size, whippedCream = false) {
     if (!['hot', 'cold', 'blended'].includes(drinkType)) {
         throw new Error('Invalid drink type. Please choose from hot, cold, or blended.');
     }
@@ -26,9 +26,7 @@ export function calculatePrice1(drinkType, size, whippedCream) {
 
     var price = DRINK_TYPE_TO_BASE_PRICE[drinkType];
     price += SIZE_TO_ADDITIONAL_PRICE[size];
-    if (whippedCream) {
-        price += 0.5;
-    }
+    price += whippedCream ? WHIPPED_CREAM_PRICE : 0;
     return price;
 }
 
@@ -36,18 +34,18 @@ export function calculatePrice1(drinkType, size, whippedCream) {
 //   1. add XL size which will cost $1.5 additionally
 //   2. Add milk tea drink type with a base price of $2.25
 //   3. Add milk options where whole milk or almond milk with almond cost additional 50c
-export function calculatePrice2(drinkType, size, whippedCream, milk) {
-    if (!['hot', 'cold', 'blended', 'milk_tea'].includes(drinkType)) {
-        throw new Error('Invalid drink type. Please choose from hot, cold, blended, or milk_tea.');
+export function calculatePrice2(drinkType, size, whippedCream = false, almond = false) {
+    if (!Object.keys(DRINK_TYPE_TO_BASE_PRICE).includes(drinkType)) {
+        throw new Error('Invalid drink type. Please choose from: ' + Object.keys(DRINK_TYPE_TO_BASE_PRICE).join(', ') + '.');
     }
-    if (!['S', 'M', 'L', 'XL'].includes(size)) {
-        throw new Error('Invalid size. Please choose from S, M, L, or XL.');
+    if (!Object.keys(SIZE_TO_ADDITIONAL_PRICE).includes(size)) {
+        throw new Error('Invalid size. Please choose from: ' + Object.keys(SIZE_TO_ADDITIONAL_PRICE).join(', ') + '.');
     }
     if (typeof whippedCream !== 'boolean') {
         throw new Error('Invalid whipped cream value. Please choose true or false.');
     }
-    if (typeof milk !== 'boolean') {
-        throw new Error('Invalid milk value. Please choose true or false.');
+    if (typeof almond !== 'boolean') {
+        throw new Error('Invalid almond value. Please choose true or false.');
     }
     if (size === 'XL' && !['cold', 'blended'].includes(drinkType)) {
         throw new Error('XL size is only available for cold and blended drinks.');
@@ -55,12 +53,8 @@ export function calculatePrice2(drinkType, size, whippedCream, milk) {
 
     var price = DRINK_TYPE_TO_BASE_PRICE[drinkType];
     price += SIZE_TO_ADDITIONAL_PRICE[size];
-    if (whippedCream) {
-        price += 0.5;
-    }
-    if (milk) {
-        price += 0.5;
-    }
+    price += whippedCream ? WHIPPED_CREAM_PRICE : 0;
+    price += almond ? ALMOND_MILK_PRICE : 0;
     return price;
 }
 
@@ -68,34 +62,12 @@ export function calculatePrice2(drinkType, size, whippedCream, milk) {
 //   1. The first 2 pumps are free
 //   2. $0.5 for each extra pump
 //   3. Maximum of 6 pumps
-export function calculatePrice3(drinkType, size, whippedCream, chocolateSauce=0) {
-    if (!['hot', 'cold', 'blended', 'milk_tea'].includes(drinkType)) {
-        throw new Error('Invalid drink type. Please choose from hot, cold, blended, or milk_tea.');
+export function calculatePrice3(drinkType, size, whippedCream = false, almond = false, chocolateSauce = 0) {
+    let price = calculatePrice2(drinkType, size, whippedCream, almond);
+    if (!Number.isInteger(chocolateSauce) || chocolateSauce < 0 || chocolateSauce > CHOCOLATE_SAUCE_PUMPS_TO_ADDITIONAL_PRICE.length - 1) {
+        throw new Error('Invalid chocolate sauce pumps.');
     }
-    if (!['S', 'M', 'L', 'XL'].includes(size)) {
-        throw new Error('Invalid size. Please choose from S, M, L, or XL.');
-    }
-    if (typeof whippedCream !== 'boolean') {
-        throw new Error('Invalid whipped cream value. Please choose true or false.');
-    }
-    if (typeof chocolateSauce !== 'number') {
-        throw new Error('Invalid chocolate sauce value. Please choose a number.');
-    }
-    if (size === 'XL' && !['cold', 'blended'].includes(drinkType)) {
-        throw new Error('XL size is only available for cold and blended drinks.');
-    }
-    if (chocolateSauce < 0 || chocolateSauce > 6) {
-        throw new Error('Invalid chocolate sauce value. Please choose between 0 and 6.');
-    }
-
-    var price = DRINK_TYPE_TO_BASE_PRICE[drinkType];
-    price += SIZE_TO_ADDITIONAL_PRICE[size];
-    if (whippedCream) {
-        price += 0.5;
-    }
-    if (chocolateSauce > 2) {
-        price += (chocolateSauce - 2) * 0.5;
-    }
+    price += CHOCOLATE_SAUCE_PUMPS_TO_ADDITIONAL_PRICE[chocolateSauce];
     return price;
 }
 
@@ -105,46 +77,38 @@ export function calculatePrice3(drinkType, size, whippedCream, chocolateSauce=0)
 //   2. Sandwiches can be egg or turkey for $1 additionally
 //   3. Bagels can have butter or cream cheese toppings for 50c additionally
 //   4. There is no size for food items
-export function calculatePrice4(itemType, topping=null) {
-    if (!['sandwich', 'bagel'].includes(itemType)) {
-        throw new Error('Invalid item type. Please choose from sandwich or bagel.');
+export function handleBreakFast(itemType, topping = null) {
+    // Check itemType is the key of BREAKFAST_CUSTOMIZATIONS_TO_ADDITIONAL_PRICE
+    if (!Object.keys(BREAKFAST_CUSTOMIZATIONS_TO_ADDITIONAL_PRICE).includes(itemType)) {
+        throw new Error('Invalid item type. Please choose from: ' + Object.keys(BREAKFAST_CUSTOMIZATIONS_TO_ADDITIONAL_PRICE).join(', '));
     }
-    if (itemType === 'sandwich' && !['egg', 'turkey', null].includes(topping)) {
-        throw new Error('Invalid topping. Please choose from egg or turkey.');
-    }
-    if (itemType === 'bagel' && !['butter', 'cream_cheese', null].includes(topping)) {
-        throw new Error('Invalid topping. Please choose from butter or cream_cheese.');
-    }
-
-    var price = 3;
-    if (itemType === 'sandwich' && topping !== null) {
-        price += 1;
-    }
-    if (itemType === 'bagel' && topping !== null) {
-        price += 0.5;
+    // Check topping is the key of BREAKFAST_CUSTOMIZATIONS_TO_ADDITIONAL_PRICE[itemType]
+    if (topping !== null && !Object.keys(BREAKFAST_CUSTOMIZATIONS_TO_ADDITIONAL_PRICE[itemType]).includes(topping)) {
+        throw new Error('Invalid topping. Please choose from: ' + Object.keys(BREAKFAST_CUSTOMIZATIONS_TO_ADDITIONAL_PRICE[itemType]).join(', '));
     }
 
+    let price = BREAKFAST_CUSTOMIZATIONS_TO_ADDITIONAL_PRICE[itemType][topping];
     return price;
 };
+export function calculatePrice4(drinkType, size, whippedCream = false, almond = false, chocolateSauce = 0, breakFastItemType = null, breakfastTopping = null) {
+    let price = calculatePrice3(drinkType, size, whippedCream, almond, chocolateSauce);
+    if (breakFastItemType !== null) {
+        price += handleBreakFast(breakFastItemType, breakfastTopping);
+    }
+    return price;
+}
 
 // Add function calculatePrice5 that calculate a list of item instead of one item at a time.
 //   1. Please add tax of 7.25% for the total price
 //   2. Please also return the price break down for each item
-function calculateItem(drinkType, size, whippedCream, chocolateSauce=0, breakFastItemType=null, breakfastTopping=null) {
-    let price = calculatePrice3(drinkType, size, whippedCream, chocolateSauce);
-    if (breakFastItemType !== null) {
-        price += calculatePrice4(breakFastItemType, breakfastTopping);
-    }
-    return price;
-}
 export function calculatePrice5(items) {
     let totalPrice = 0;
     let priceBreakdown = [];
     for (let item of items) {
-        let price = calculateItem(item.drinkType, item.size, item.whippedCream, item.chocolateSauce, item.breakFastItemType, item.breakfastTopping);
+        let price = calculatePrice4(item.drinkType, item.size, item.whippedCream, item.almond, item.chocolateSauce, item.breakFastItemType, item.breakfastTopping);
         totalPrice += price;
-        priceBreakdown.push({item: item, price: price});
+        priceBreakdown.push({ item: item, price: price });
     }
-    return {totalPrice: totalPrice * 1.0725, priceBreakdown: priceBreakdown};
+    return { totalPrice: totalPrice * (1 + TAX), priceBreakdown: priceBreakdown };
 }
 
