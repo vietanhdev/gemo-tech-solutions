@@ -192,6 +192,21 @@ describe('handleBreakFast', function() {
 });
 
 
+describe('calculatePrice4', function() {
+  it('should return correct price for a blended drink with whipped cream and almond milk + a sandwich without a topping', function() {
+    const drinkType = 'blended';
+    const size = 'L';
+    const whippedCream = true;
+    const almond = true;
+
+    const expectedPrice = DRINK_TYPE_TO_BASE_PRICE[drinkType] + SIZE_TO_ADDITIONAL_PRICE[size] + 0.5 + 0.5 + 3;
+    const actualPrice = calculatePrice4(drinkType, size, whippedCream, almond, 2, 'sandwich');
+
+    assert.strictEqual(actualPrice, expectedPrice);
+  });
+});
+
+
 describe('calculatePrice5', function () {
 
   it('should calculate total price and price breakdown for a single item', function () {
