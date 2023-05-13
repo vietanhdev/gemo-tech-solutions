@@ -1,2 +1,4 @@
-# gemo-tech-solutions
-My solutions for Gemo Tech Exercises
+# Gemo Tech Exercises
+
+My solutions for Gemo Tech Exercises.
+
