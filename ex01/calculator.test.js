@@ -84,23 +84,6 @@ describe('calculatePrice2', () => {
     assert.throws(() => calculatePrice2(drinkType, size, whippedCream, almond), Error);
   });
 
-  it('should throw an error for an XL size with a hot drink type', () => {
-    const drinkType = 'hot';
-    const size = 'XL';
-    const whippedCream = false;
-    const almond = false;
-
-    assert.throws(() => calculatePrice2(drinkType, size, whippedCream, almond), Error);
-  });
-
-  it('should throw an error for an XL size with a milk tea drink type', () => {
-    const drinkType = 'milk_tea';
-    const size = 'XL';
-    const whippedCream = false;
-    const almond = false;
-
-    assert.throws(() => calculatePrice2(drinkType, size, whippedCream, almond), Error);
-  });
 
   it('should calculate the correct price for a blended drink with whipped cream and almond milk', () => {
     const drinkType = 'blended';

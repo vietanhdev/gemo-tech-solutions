@@ -34,6 +34,7 @@ export function calculatePrice1(drinkType, size, whippedCream = false) {
 //   1. add XL size which will cost $1.5 additionally
 //   2. Add milk tea drink type with a base price of $2.25
 //   3. Add milk options where whole milk or almond milk with almond cost additional 50c
+//   NOTE: The requirement of size constraint for Cafe is removed as it does not make sense =))
 export function calculatePrice2(drinkType, size, whippedCream = false, almond = false) {
     if (!Object.keys(DRINK_TYPE_TO_BASE_PRICE).includes(drinkType)) {
         throw new Error('Invalid drink type. Please choose from: ' + Object.keys(DRINK_TYPE_TO_BASE_PRICE).join(', ') + '.');
@@ -46,9 +47,6 @@ export function calculatePrice2(drinkType, size, whippedCream = false, almond = 
     }
     if (typeof almond !== 'boolean') {
         throw new Error('Invalid almond value. Please choose true or false.');
-    }
-    if (size === 'XL' && !['cold', 'blended'].includes(drinkType)) {
-        throw new Error('XL size is only available for cold and blended drinks.');
     }
 
     var price = DRINK_TYPE_TO_BASE_PRICE[drinkType];
